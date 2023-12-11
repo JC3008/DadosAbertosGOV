@@ -17,3 +17,5 @@ WORKDIR /workspaces/app
 ENV PYTHONPATH=/usr/local/bin/python
 
 CMD ["python"]
+
+# first test for CI
