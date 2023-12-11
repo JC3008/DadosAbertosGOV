@@ -1,3 +1,8 @@
+# Resumo
+
+Este projeto visa automatizar a extração de dados fundamentalistas de empresas listadas na B3. Para padronizar a integração de código será usado Git Actions para criação de Pipelines CI/CD.
+
+
 pipeline de integração contínua
 
 CI (Continuous Integration)
