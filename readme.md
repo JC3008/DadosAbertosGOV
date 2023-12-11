@@ -68,7 +68,7 @@ jobs:
       - name: Deploy to Kubernetes cluster
         uses: Azure/k8s-deploy@v4
         with:
-          images: JC/DadosAbertosGOV:${{github.run_number}}
+          images: jcs7/fundamentus:v1.0
           manifests: k8s/deployment.yaml
       
 
