@@ -25,5 +25,5 @@ jobs:
           file: ./src/Dockerfile
           push: true
           tags:
-            jcs7/fundamentus:v${{ github.run_number }}.0
+            jcs7/fundamentus:v1.0
             jcs7/fundamentus:latest
