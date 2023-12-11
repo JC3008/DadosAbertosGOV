@@ -1,4 +1,4 @@
-name: CI-CD
+name: CI
 
 on: 
   push:
@@ -21,8 +21,8 @@ jobs:
       - name: Docker build
         uses: docker/build-push-action@v5.1.0
         with:
-          context: ./src
-          file: ./src/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags:
             jcs7/fundamentus:v1.0
