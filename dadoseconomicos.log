@@ -1,0 +1,6 @@
+URL and headers defined -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:10:56,576
+Parsing file with BeautifulSoup -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:10:58,703
+Iterating over php table rows -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:05,899
+Variable bucket ready -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:29,718
+Connection ready to be used -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:29,872
+File was successfully uploaded to s3 bucket -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:33,821

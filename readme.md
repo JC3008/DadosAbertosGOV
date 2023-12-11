@@ -37,11 +37,40 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3.1.0
+
+      - name: autentication docker hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{secrets.DOCKERHUB_USER}}
+          password: ${{secrets.DOCKERHUB_PWD}}
+
       - name: Docker build
         uses: docker/build-push-action@v3.2.0
         with:
           context: ./src
+          file: ./src/Dockerfile
+          push: true
+          tags:
+            JC/DadosAbertosGOV:${{github.run_number}}
+            JC/DadosAbertosGOV:latest
+  
   CD:
+    runs-on: ubuntu-latest
+    needs: [CI]
+
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - name: Cluster Context
+        uses: Azure/k8s-set-context@3.0
+        with:
+          method: kubeconfig
+          kubeconfig: ${{secrets.k8s_CONFIG}}
+      - name: Deploy to Kubernetes cluster
+        uses: Azure/k8s-deploy@v4
+        with:
+          images: JC/DadosAbertosGOV:${{github.run_number}}
+          manifests: k8s/deployment.yaml
+      
 
   
 
