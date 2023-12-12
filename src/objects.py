@@ -198,6 +198,10 @@ class folder_builder():
                     'key':f'{YearMonthDateFolder}'}
 
 class data_transfer():
+    '''
+    This class performs data transfer between S3 buckets and add metadata fields in
+    order to better management of the dataflow. The goal of that feature is to provide 
+    agility whenever debugging is neeeded.'''
     bucket = dict
     identity = str
     def __init__(self,
@@ -233,10 +237,9 @@ class data_transfer():
    
     def transfer(self):
         '''
-        This class performs data transfer between S3 buckets and add metadata fields in
-        order to better management of the dataflow. The goal of that feature is to provide 
-        agility whenever debugging is neeeded.
-        Four field are added by default:
+        transfer method aims to move data from one S3 bucket to another, adding 
+        new fields.
+        4 fields are added by default:
             identity: Field which contains the pipeline name and pipeline_id
             loaded_{*Target bucket name}_date: Date of data uploading
             loaded_{*Target bucket name}_time: Time of data uploading
