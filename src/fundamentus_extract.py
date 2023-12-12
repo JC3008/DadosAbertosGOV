@@ -1,4 +1,6 @@
 # importing libraries
+import sys
+sys.path.append("/usr/local/lib/python3.9/dist-packages")
 from bs4 import *
 import pandas as pd
 from urllib.request import Request, urlopen
@@ -40,7 +42,7 @@ logging.basicConfig(
         format="%(message)s -  %(funcName)s - %(filename)s - %(asctime)s"
         )
     
-def Fundamentus_ELT():  
+def Fundamentus_to_landing():  
      
     '''
     
@@ -99,5 +101,24 @@ def Fundamentus_ELT():
             Key=f'{YearMonthDateFolder}fundamentus_historico.csv')
         
     return logging.info('File was successfully uploaded to s3 bucket')       
+
+def Fundamentus_to_processed():
+    objects.data_transfer(source='landing',
+                target='processed',
+                provider='s3',
+                profile='admin',
+                file=pd.DataFrame(),
+                pipeline='ppl_fundamentus').transfer()
+
+if __name__ == "__main__":
+    logging.info("ELT process started! Fundamentus_to_landing was triggered")
+    Fundamentus_to_landing()
+    logging.info("Fundamentus_to_landing finished its data upload to S3 landing bucket")
+    logging.info("Fundamentus_to_processed was triggered")
+    Fundamentus_to_processed()
+    logging.info("Fundamentus_to_processed has transfered data from landing to process")
+
+
+
 
 

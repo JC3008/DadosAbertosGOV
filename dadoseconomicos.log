@@ -1,6 +1,14 @@
-URL and headers defined -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:10:56,576
-Parsing file with BeautifulSoup -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:10:58,703
-Iterating over php table rows -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:05,899
-Variable bucket ready -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:29,718
-Connection ready to be used -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:29,872
-File was successfully uploaded to s3 bucket -  Fundamentus_ELT - fundamentus_extract.py - 2023-12-11 19:11:33,821
+ELT process started! Fundamentus_to_landing was triggered -  <module> - fundamentus_extract.py - 2023-12-12 19:20:14,759
+URL and headers defined -  Fundamentus_to_landing - fundamentus_extract.py - 2023-12-12 19:20:14,759
+Parsing file with BeautifulSoup -  Fundamentus_to_landing - fundamentus_extract.py - 2023-12-12 19:20:16,121
+Iterating over php table rows -  Fundamentus_to_landing - fundamentus_extract.py - 2023-12-12 19:20:17,462
+Variable bucket ready -  Fundamentus_to_landing - fundamentus_extract.py - 2023-12-12 19:20:46,777
+Connection ready to be used -  Fundamentus_to_landing - fundamentus_extract.py - 2023-12-12 19:20:48,593
+File was successfully uploaded to s3 bucket -  Fundamentus_to_landing - fundamentus_extract.py - 2023-12-12 19:20:51,339
+Fundamentus_to_landing finished its data upload to S3 landing bucket -  <module> - fundamentus_extract.py - 2023-12-12 19:20:51,344
+Fundamentus_to_processed was triggered -  <module> - fundamentus_extract.py - 2023-12-12 19:20:51,344
+AWS connection was establshed by using the profileadmin for aws_connection class -  transfer - objects.py - 2023-12-12 19:20:51,351
+Adding new metadata fields -  transfer - objects.py - 2023-12-12 19:20:53,170
+Dataframe was successfully buffered -  transfer - objects.py - 2023-12-12 19:20:53,181
+Done! Pipeline ran as ppl_fundamentus_5794e924dffe4638 using tags S3|Fundamentus|B3 -  transfer - objects.py - 2023-12-12 19:20:56,114
+Fundamentus_to_processed has transfered data from landing to process -  <module> - fundamentus_extract.py - 2023-12-12 19:20:56,118

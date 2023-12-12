@@ -2,8 +2,8 @@ import sys
 sys.path.append(r'C:\Users\SALA443\Desktop\Projetos\Dados_B3 - teste\CVM\airflow')
 sys.path.append(r"C:\Users\SALA443\Desktop\Projetos\Dados_B3 - teste\Transform\CVM_env\Lib\site-packages")
 # print (sys.path)
-import datetime
-from datetime import date
+import datetime as dt
+from datetime import datetime,date,time
 import zipfile
 import requests
 from bs4 import BeautifulSoup
@@ -16,16 +16,26 @@ from botocore.exceptions import ClientError
 from pathlib import Path
 from dotenv import load_dotenv
 import io
+import uuid
 
-
-dotenv_path = Path(r'/workspaces/DadosAbertosGOV/src/.env')
+dotenv_path = Path(r'/workspaces/app/.env')
 load_dotenv(dotenv_path=dotenv_path)
-print(dotenv_path)
+# print(dotenv_path)
 
-today = datetime.date.today()   
+logging.basicConfig(
+    
+        level=logging.INFO,
+        handlers=[logging.FileHandler("dadoseconomicos.log", mode='w'),logging.StreamHandler()],
+        format="%(message)s -  %(funcName)s - %(filename)s - %(asctime)s"
+        )
+
+today = dt.date.today()    
 '''output example: 2023/11/23/'''
 
+sep = {'standard':';','altered':','}
+encoding = {'standard':'utf-8','altered':'Windows-1252'}
 
+tags = {'ppl_fundamentus':'S3|Fundamentus|B3'}
 
 '''
 This script aims to build the local enviroment to receive files from 
@@ -54,7 +64,11 @@ class folderpath():
     def __str__(self) -> str:
         return f"{self.year}/{self.month}/{self.day}/"
     
-YearMonthDateFolder = folderpath(year = str(today.year),month = str(today.month).zfill(2),day = str(today.day).zfill(2))
+YearMonthDateFolder = folderpath(
+    year = str(today.year),
+    month = str(today.month).zfill(2),
+    day = str(today.day).zfill(2)
+    )
 
 class s3path():
     """This object builds folder structure of S3 datalake
@@ -117,8 +131,13 @@ class aws_s3_buckets():
             return "caminho inexistente"  
         
 class aws_connection():
+    '''
+    This class performs the aws connection, by fetching 
+    credentials within .env file.
+    '''
     def __init__(self,profile:str):
         self.profile = profile
+        
     @property
     def account(self) -> dict:
         
@@ -133,11 +152,13 @@ class aws_connection():
 
 # Variable credentials receives the attributes of aws_connection class
 # which gets the credentials of .env file
-credentials = aws_connection(profile='admin').account     
-client = boto3.client('s3',
-                aws_access_key_id=credentials['aws_access_key_id'],
-                aws_secret_access_key=credentials['aws_secret_access_key']
-                )
+# credentials = aws_connection(profile='admin').account     
+# client = boto3.client('s3',
+#                 aws_access_key_id=credentials['aws_access_key_id'],
+#                 aws_secret_access_key=credentials['aws_secret_access_key']
+#                 )
+
+# credentials = aws_connection(profile='admin').account
 
 class folder_builder():
     '''
@@ -176,105 +197,107 @@ class folder_builder():
                     'target_bucket':f'de-okkus-{self.targetlayer}-dev-727477891012',
                     'key':f'{YearMonthDateFolder}'}
 
-
-
-
-  
-#     def transfer(self):
+class data_transfer():
+    bucket = dict
+    identity = str
+    def __init__(self,
+                 source:str,
+                 target:str,
+                 provider:str,
+                 profile:str,
+                 file:object,
+                 pipeline=str,
+                 pipeline_id=None,
+                 tag=None):
+        
+        self.source         = source
+        self.target         = target
+        self.provider       = provider
+        self.profile        = profile
+        self.file           = file
+        self.pipeline       = pipeline
+        self.pipeline_id    = pipeline_id
+        self.tag            = tag
+        
+        
+    @property  
+    def path(self) -> dict:
+        
+        bucket = folder_builder(
+            sourcelayer=self.source,
+            targetlayer=self.target,
+            storageOption=self.provider).storage_selector  
+    
+        return bucket
+    
+   
+    def transfer(self):
+        '''
+        This class performs data transfer between S3 buckets and add metadata fields in
+        order to better management of the dataflow. The goal of that feature is to provide 
+        agility whenever debugging is neeeded.
+        Four field are added by default:
+            identity: Field which contains the pipeline name and pipeline_id
+            loaded_{*Target bucket name}_date: Date of data uploading
+            loaded_{*Target bucket name}_time: Time of data uploading
+            tags: Tags that are binded to pipeline name
             
-#         bucket_x_key = files_IO(storageOption=self.storageOption,sourcelayer=self.sourcelayer,targetlayer=self.targetlayer).sourcelayerMode
-#         Bucket = bucket_x_key['Bucket'] 
-#         Key = bucket_x_key['Key'] 
-#         data = client.get_object(Bucket=Bucket,Key=Key)
+        To perform the transfer method, write as bellow:
         
-#         df = pd.read_csv(data['Body'],sep=';',encoding='utf-8')
-#         df[f'loaded_to{self.sourcelayer}_date'] = date.today()
-#         df[f'loaded_to{self.sourcelayer}_time'] = datetime.now().time()
-#         buffer = io.StringIO()
+        data_transfer(source='landing',
+                target='processed',
+                provider='s3',
+                profile='admin',
+                file=pd.DataFrame(),
+                pipeline='ppl_fundamentus').transfer()
+                
+        This function will get fundametus.csv file from S3 source to target and also will
+        add the four metadata fields mentioned before.
         
-#         bucket_x_key = files_IO(storageOption=self.storageOption,sourcelayer=self.sourcelayer,targetlayer=self.targetlayer).targetlayer
-#         Bucket = bucket_x_key['Bucket'] 
-#         Key = bucket_x_key['Key'] 
-#         df.to_csv(buffer,encoding='utf-8',sep=';')    
+        '''        
         
-#         client.put_object(
-#                 ACL='private',
-#                 Body=buffer.getvalue(),
-#                 Bucket=f'de-okkus-{self.targetlayer}-dev-727477891012',
-#                 Key=f'{YearMonthDateFolder}{self.filename}')
-
-# x = files_IO(
-#     sourcelayer='landing',
-#     targetlayer='processed',
-#     filename='cad_cia_aberta.csv',
-#     storageOption='s3').transfer
-
-# files_IO.transfer()
-# bucketKey = files_IO(storageOption='s3',layer='processed').layerMode
-# print(bucketKey['Bucket'])
-# print(bucketKey['Key'])
-
-            
-            
+        credentials = aws_connection(profile=self.profile).account
+        client = boto3.client(self.provider,                              
+                              aws_access_key_id=credentials['aws_access_key_id'],
+                              aws_secret_access_key=credentials['aws_secret_access_key']
+                        )
         
-        # credentials = aws_connection(profile="admin").account
-        # # url = 'https://dados.cvm.gov.br/dados/CIA_ABERTA/CAD/DADOS/cad_cia_aberta.csv'
-        # df = pd.read_csv(self.source,sep=';',encoding='Windows-1252')
-        # buffer = io.StringIO()
-        # df.to_csv(buffer,encoding='utf-8',sep=';')
-        # # rawData = io.StringIO(urlData.decode('ISO 8859-1'))
-        # client = boto3.client('s3',aws_access_key_id=credentials['aws_access_key_id'],
-        #                         aws_secret_access_key=credentials['aws_secret_access_key']
-        #                         )    
-
-        # client.put_object(ACL='private',
-        #             Body=buffer.getvalue(),
-        #             Bucket='de-okkus-landing-dev-727477891012',
-        #             Key=f'{self.folderStructure}cad_cia_aberta.csv')      
-    # @property
-    # def conn(self):        
-    #     return aws_connection(os.getenv("aws_access_key_id"),os.getenv("aws_secret_access_key"),os.getenv("aws_region"))  
-    # @property
-    # def credentials(self):
+        logging.info(f"AWS connection was establshed by using the profile{self.profile} for aws_connection class")
         
+        bucket = data_transfer(
+            source=self.source,
+            target=self.target,
+            provider=self.provider,
+            profile=self.profile,
+            file=pd.DataFrame(),
+            pipeline_id=str()
+            ).path
+
+        key = f'{YearMonthDateFolder}fundamentus_historico.csv'
+
+        data = client.get_object(Bucket=bucket['source_bucket'],Key=key)
+        self.file = pd.read_csv(data["Body"],sep=sep['standard'],encoding=encoding['standard']) 
         
+        # adding new fields
+        # self.pipeline = 'ppl_intra_s3'
+        self.pipeline_id = uuid.uuid4().hex[:16]
+        identity = f"{self.pipeline}_{self.pipeline_id}"
         
-    #     self.aws_access_key_id       = os.getenv("aws_access_key_id"),
-    #     self.aws_secret_access_key   = os.getenv("aws_secret_access_key"),
-    #     self.aws_region              = os.getenv("aws_region") 
+        logging.info(f"Adding new metadata fields")
+        self.file['identity'] = identity
+        self.file[f"loaded_{bucket['target_bucket']}_date"] = date.today()
+        self.file[f"loaded_{bucket['target_bucket']}_time"] = datetime.now().time()
+        self.file['tags'] = tags[self.pipeline]
         
-    #     return self.aws_access_key_id
+        buffer = io.StringIO()
+        self.file.to_csv(buffer,sep=sep['standard'],encoding=encoding['standard'],index=None)
+        logging.info(f"Dataframe was successfully buffered")
+                
+        client.put_object(ACL='private',
+        Body=buffer.getvalue(),
+        Bucket=bucket['target_bucket'],
+        Key=f'{YearMonthDateFolder}fundamentus_historico.csv')
+        logging.info(f"Done! Pipeline ran as {identity} using tags {tags[self.pipeline]}")
 
-# ends settings from folder structure and s3 buckets path
-# credentials = aws_connection(profile="admin").account
-# print (credentials['aws_access_key_id'])
-# print (credentials['aws_region'])
 
 
-# def FindDREfiles(param:str) -> list:
-#     """
-#     Finds and Lists all files that matches with DRE
-#     """
-#     FileList = []
-#     for file in os.listdir(ProcessedZone):
-        
-#         if re.findall(param,file):
-            
-#             FileList.append(file)
-           
-#     return FileList
-
-# def ReadDREFilesTransformAndSaveAsParquet():
-
-#     fileList = FindDREfiles('DRE')
-
-#     for file in fileList[:]:  
-#         foldername = f"{str(file).strip('.csv')}/"
-#         schema = dre
-#         df = pd.read_csv(f'{ProcessedZone}{file}',delimiter=';',encoding='ISO-8859-1')
-#         df['Transform_Date'] = pd.to_datetime('today').to_datetime64()
-#         os.makedirs(f"{ConsumeZone}{foldername}",exist_ok=True)
-#         file = str(file).strip('.csv')
-#         df.to_parquet(f"{ConsumeZone}{foldername}{file}_{pd.to_datetime('today').date()}.parquet",engine='pyarrow',partition_cols='DT_INI_EXERC')
-#         file = None
-#     return None

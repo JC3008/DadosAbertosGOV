@@ -1,0 +1,6 @@
+URL and headers defined -  Fundamentus_ELT - <ipython-input-1-5be7b961a443> - 2023-12-12 15:04:06,617
+Parsing file with BeautifulSoup -  Fundamentus_ELT - <ipython-input-1-5be7b961a443> - 2023-12-12 15:04:07,487
+Iterating over php table rows -  Fundamentus_ELT - <ipython-input-1-5be7b961a443> - 2023-12-12 15:04:08,461
+Variable bucket ready -  Fundamentus_ELT - <ipython-input-1-5be7b961a443> - 2023-12-12 15:04:29,908
+Connection ready to be used -  Fundamentus_ELT - <ipython-input-1-5be7b961a443> - 2023-12-12 15:04:29,913
+File was successfully uploaded to s3 bucket -  Fundamentus_ELT - <ipython-input-1-5be7b961a443> - 2023-12-12 15:04:32,255

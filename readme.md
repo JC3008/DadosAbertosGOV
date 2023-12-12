@@ -2,13 +2,14 @@
 
 Este projeto visa automatizar a extração de dados fundamentalistas de empresas listadas na B3. Para padronizar a integração de código será usado Git Actions para criação de Pipelines CI/CD.
 
+docker build -t python_fundamentus:latest . 
 
+docker run python_fundamentus:latest python3.9 /workspaces/app/fundamentus_extract.py
 pipeline de integração contínua
 
 CI (Continuous Integration)
 integração de código visando agregar novas features de forma padronizada e automática.
 etapas envolvidas (codificação, commit, build, teste, geração de pacote)
-
 
 pipeline de entrega contínua
 CD (Continuous Deployment)

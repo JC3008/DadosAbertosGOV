@@ -13,8 +13,9 @@ RUN  pip install --upgrade pip && \
 RUN mkdir -p /workspaces/app/  
 COPY /src /workspaces/app 
 WORKDIR /workspaces/app
-              
-ENV PYTHONPATH=/usr/local/bin/python
+
+ENV PYTHONPATH=/usr/local/lib/python3.9/dist-packages
+# ENV PYTHONPATH=/usr/local/bin/python
 
 CMD ["python"]
 
