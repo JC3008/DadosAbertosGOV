@@ -46,6 +46,11 @@ No arquivo fundamentus_extract.py estão as chamadas para execução de duas fun
 
 
 ## CI (Continuous Integration)
+A criação do processo de CI foi considerada importante, pois dessa maneira todas as alterações feitas no arquivo dockerfile são replicadas automaticamente no Dockerhub.
+
+Para configurar o processo, basta acessar o comando actions do Github, e confiurar o arquivo yaml conforme está no arquivo .github\workflows\main.yml. Alterando apenas as secrets e as tags, que devem estar conforme sua configuração pessoal.
+
+### Conceito
 integração de código visando agregar novas features de forma padronizada e automática.
 etapas envolvidas (codificação, commit, build, teste, geração de pacote)
 
