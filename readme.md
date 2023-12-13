@@ -36,6 +36,15 @@ Dentro do arquivo objects.py existem as classes construídas para padronizar as 
 * aws_connection: Classe que busca as credenciais no arquivo .env e estabelece a conexão
 * data_transfer: Classe que visa mover arquivos entre S3 buckets, adicionando alguns campos de metadados.
 
+No arquivo fundamentus_extract.py estão as chamadas para execução de duas funções:
+* Fundamentus_to_landing: Função que busca os dados da tabela php do site fundamentus, e armazena em um bucket chamado landing.
+* Fundamentus_to_processed: Função que lê o arquivo da landing, e carrega para a camada processed com quatro campos novos:
+- ['identity'] : campo que registra o nome da pipeline concatenado com um id unico para a execução.
+- ['loaded_{*nome_da_layer*}_date']: Campo que indica a data da carga para a layer mencionada.
+- ['loaded_{*nome_da_layer*}_time']: Campo que indica a hora da carga para a layer mencionada.
+- ['tags']: Campo que registra as tags separadas por '|'. Estas tags, em combinação com o campo identity serão utilizadas para otimizar o processo de debug quando necessário.
+
+
 ## CI (Continuous Integration)
 integração de código visando agregar novas features de forma padronizada e automática.
 etapas envolvidas (codificação, commit, build, teste, geração de pacote)
